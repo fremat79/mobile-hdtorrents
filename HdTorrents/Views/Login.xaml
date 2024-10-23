@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="HdTorrents.Views.LoginView"
+             Title="Login"
+             xmlns:viewModel="clr-namespace:HdTorrents.ViewModel"
+             xmlns:FAHelper="clr-namespace:HdTorrents.Types.Helpers;assembly=HdTorrents.Types"
+             x:DataType="viewModel:LoginViewModel"
+             BackgroundColor="#181529">
+    <Grid RowDefinitions="2*,6*,2*">
+        <Image Grid.RowSpan="3" 
+            Source="https://hdtorrents.eu/img/pipes/silver.png"
+            Scale="1"
+            Rotation="0"/>
+        <Frame BorderColor="Transparent" Opacity=".9" Grid.Row="1" BackgroundColor="#615993" Margin="10,0"  IsClippedToBounds="True" CornerRadius="20" Padding="0">
+            <VerticalStackLayout  VerticalOptions="Center" Margin="40,10" Spacing="10" >
+                <Label TextColor="#1f1735" Text="HD TORRENTS" FontSize="Large" FontAttributes="Bold"/>
+                <Label Text="UserName" VerticalTextAlignment="Center"/>
+                <Frame BorderColor="Transparent" BackgroundColor="#837da5" IsClippedToBounds="True" CornerRadius="20" Padding="5">
+                    <Entry  x:Name="txtUserName" Placeholder="UserName"/>
+                </Frame>
+                <Label Text="Password" VerticalTextAlignment="Center"/>
+                <Frame HorizontalOptions="FillAndExpand" BorderColor="Transparent" BackgroundColor="#837da5" IsClippedToBounds="True" CornerRadius="20" Padding="5">
+                    <Grid ColumnSpacing="5" ColumnDefinitions="80*,20*">
+                        <Entry Grid.Column="0" IsPassword="True" x:Name="txtPwd" Placeholder="Password"/>
+                        <Button Grid.Column="1" x:Name="btnShowPwd" Pressed="btnShowPwd_Pressed"  FontFamily="FA" TextColor="White" Text="{x:Static FAHelper:FontAwesomeIcons.Eye}"/>
+                    </Grid>
+                </Frame>
+                <Button BackgroundColor="#130e20" Text="Login" x:Name="btnLogin" 
+                Command="{Binding LoginCommand}">
+                    <Button.CommandParameter >
+                        <MultiBinding Converter="{StaticResource loginParameterConverter}">
+                            <Binding Path="Text" Source="{x:Reference txtUserName}"/>
+                            <Binding Path="Text" Source="{x:Reference txtPwd}"/>
+                        </MultiBinding>
+                    </Button.CommandParameter>
+                </Button>
+            </VerticalStackLayout>
+        </Frame>
+    </Grid>
+
+</ContentPage>

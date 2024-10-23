@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="HdTorrents.Views.TorrentsView"
+             xmlns:viewModel="clr-namespace:HdTorrents.ViewModel"
+             xmlns:sk="clr-namespace:Maui.Skeleton;assembly=Maui.Skeleton"
+             xmlns:HdTorrentsTypes="clr-namespace:HdTorrents.Types.Models;assembly=HdTorrents.Types"
+             xmlns:Helpers="clr-namespace:HdTorrents.Types.Helpers;assembly=HdTorrents.Types"
+             x:DataType="viewModel:TorrentsViewModel"
+             Title="TorrentsView">
+    <Shell.BackButtonBehavior>
+        <BackButtonBehavior IsVisible="False"/>
+    </Shell.BackButtonBehavior>
+    <ContentPage.Resources>
+        <DataTemplate  x:DataType="HdTorrentsTypes:Torrent" x:Key="Details">
+            <Border  
+                Padding="10" 
+                Background="#1e1e1e"
+                StrokeShape="RoundRectangle 20,20,20,20"
+                Margin="10,5">
+                <Grid                     
+                    ColumnDefinitions="auto,*" 
+                    ColumnSpacing="10">
+                    <VerticalStackLayout Grid.Column="0">
+                        <Label FontFamily="FA" Margin="0,0,0,5" HorizontalTextAlignment="Center" Text="{Binding Category}" TextColor="#2996ea" FontSize="32"/>
+                        <Border Padding="10" Background="Transparent" StrokeShape="RoundRectangle 20,20,20,20">
+                            <VerticalStackLayout>
+                                <Label TextColor="#cccccc" Text="{Binding Resolution}" FontSize="10"/>
+                                <Label TextColor="#cccccc" Text="{Binding Type}" FontSize="10"/>
+                            </VerticalStackLayout>
+                        </Border>
+                    </VerticalStackLayout>
+                    <VerticalStackLayout Grid.Column="1" Spacing="1.5">
+                        <Label Text="{Binding Title}" FontAttributes="Bold" Margin="0,0,0,5" TextColor="#2996ea"  FontSize="15" VerticalTextAlignment="Start"/>
+                        <HorizontalStackLayout Spacing="10" Margin="0,0,0,5">
+                            <Label Text="&#xf093;" FontFamily="FA" TextColor="#2dcc71" VerticalOptions="End"/>
+                            <Label Text="{Binding Owner}"  TextColor="#2dcc71"/>
+                            <Label Text="&#xf21e;" FontFamily="FA" TextColor="#2996ea" VerticalOptions="End"/>
+                            <Label Text="{Binding HeaetBeat}"   TextColor="#2996ea"/>
+                            <Label Text="&#xf4a6;" FontFamily="FA" TextColor="#2dcc71" VerticalOptions="End"/>
+                            <Label Text="{Binding Comments}"  TextColor="#2dcc71"/>
+                        </HorizontalStackLayout>
+                        <HorizontalStackLayout Spacing="10">
+                            <Label  Text="{Binding Rating, StringFormat='Rating: {0}'}" FontSize="13"   TextColor="#2dcc71"/>
+                            <Label  Text="{Binding Size, StringFormat='Size: {0}'}" FontSize="13"   TextColor="#2dcc71"/>
+                        </HorizontalStackLayout>
+                        <HorizontalStackLayout Spacing="10">
+                            <Label Text="&#xf35b;" FontFamily="FA" FontSize="13" TextColor="#cccccc" VerticalOptions="End"/>
+                            <Label  Text="{Binding Seeders}" FontSize="13"   TextColor="#2dcc71"/>
+                            <Label Text="&#xf358;" FontFamily="FA" FontSize="13" TextColor="#cccccc" VerticalOptions="End"/>
+                            <Label  Text="{Binding Leechers}" FontSize="13"   TextColor="#2dcc71"/>
+                            <Label Text="&#xf058;" FontFamily="FA" FontSize="13" TextColor="#cccccc" VerticalOptions="End"/>
+                            <Label  Text="{Binding Completed}" FontSize="13"   TextColor="#2dcc71"/>
+                        </HorizontalStackLayout>
+                    </VerticalStackLayout>
+                </Grid>
+            </Border>
+        </DataTemplate>
+        <DataTemplate x:DataType="HdTorrentsTypes:Torrent" x:Key="Poster">
+            <VerticalStackLayout Margin="5,0">
+                <Image IsAnimationPlaying="True" Source="{Binding PosterUrl}"/>
+                <Label FontAttributes="Bold" TextColor="White" Text="{Binding Title}"/>
+                <Label Text="{Binding ReleaseData}" TextColor="White"/>
+            </VerticalStackLayout>
+        </DataTemplate>
+        <DataTemplate x:DataType="HdTorrentsTypes:Torrent" x:Key="Card">
+            <Grid ColumnDefinitions="3*,7*" Margin="5,1">
+                <Image  IsAnimationPlaying="True" Source="{Binding PosterUrl}"/>
+                <VerticalStackLayout BackgroundColor="#272727" Grid.Column="1" Margin="5,0" Padding="5" Spacing="4">
+                    <Label TextColor="White" Text="{Binding Title}"/>
+                    <HorizontalStackLayout Spacing="4">
+                        <Label TextColor="White" FontFamily="FA" Text="{x:Static Helpers:FontAwesomeIcons.Star}"/>
+                        <Label TextColor="White" Text="{Binding Rating}"/>
+                    </HorizontalStackLayout>
+                    <Label TextColor="White" Text="{Binding Description}"/>
+                </VerticalStackLayout>
+            </Grid>
+        </DataTemplate>
+        <viewModel:TorrentsViewTemplateSelector x:Key="ViewTemplateSelector"            
+            Details="{StaticResource Details}"
+            Poster="{StaticResource Poster}"
+            Card="{StaticResource Card}">
+        </viewModel:TorrentsViewTemplateSelector>
+    </ContentPage.Resources>
+    <Grid RowDefinitions="10*,10*,72*,8*" Background="Black">
+        <Entry  TextChanged="Entry_TextChanged" Grid.Row="0"></Entry>
+        <CollectionView 
+            Grid.Row="1"    
+            SelectionMode="Single"
+                ItemsLayout="HorizontalList"
+                HorizontalOptions="CenterAndExpand"
+                ItemsSource="{Binding Pages}"
+                SelectionChangedCommand="{Binding NavigateToPageCommand}"
+                SelectionChangedCommandParameter="{Binding Source={RelativeSource Self}, Path=SelectedItem}"
+                sk:Skeleton.IsBusy="{Binding IsRefreshing}"
+                sk:Skeleton.IsParent="True"
+                sk:Skeleton.Animation="{sk:DefaultAnimation Fade}">
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="HdTorrentsTypes:BasePage">
+                    <Border
+                        StrokeShape="RoundRectangle 20,20,20,20"
+                        Background="Transparent"
+                        VerticalOptions="Center"
+                        Padding="5">
+                        <Label                           
+                            TextColor="{Binding ., Converter={StaticResource CurrentPageTextColorConverter}, ConverterParameter=White}"
+                            Background="{Binding ., Converter={StaticResource PageBackgroundConverter}, ConverterParameter=Transparent}"
+                            FontAttributes="{Binding IsCurrent, Converter={StaticResource  CurrentPageFontAttributeConverter}}"                                                         
+                            FontSize="Medium"
+                            HorizontalOptions="Center"
+                            Text="{Binding DisplayText}"/>
+                    </Border>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+        <RefreshView 
+            Grid.Row="2" 
+            Command="{Binding RefreshTorrentsCommand}"
+            IsRefreshing="{Binding IsRefreshing}">
+            <viewModel:HDTorrentCollectionView 
+                        ItemTemplate="{StaticResource ViewTemplateSelector}"                
+                        SelectionMode="Single"
+                        ItemsSource="{Binding Items}"
+                        TorrentsLayout="{Binding Layout}"
+                        SelectionChangedCommand="{Binding GoToDetailViewCommand}"                        
+                        RemainingItemsThresholdReachedCommand="{Binding LoadMoreCommand}"
+                        SelectionChangedCommandParameter="{Binding Source={RelativeSource Self}, Path=SelectedItem}"
+                        RemainingItemsThreshold="1"                        
+                        sk:Skeleton.IsParent="True"
+                        sk:Skeleton.Animation="{sk:DefaultAnimation Fade}"
+                        sk:Skeleton.IsBusy="{Binding IsRefreshing}">
+                <CollectionView.ItemsLayout>
+                    <GridItemsLayout Orientation="Vertical" Span="{Binding Layout, Converter={StaticResource SpanLayoutConverter}}" />
+                </CollectionView.ItemsLayout>
+            </viewModel:HDTorrentCollectionView>
+        </RefreshView>
+        <HorizontalStackLayout Grid.Row="3" Spacing="30" HorizontalOptions="Center">
+            <Button FontFamily="FA" Background="Transparent" TextColor="White" Text="&#xf03a;" Command="{Binding ChangeLayoutCommand}" CommandParameter="Details"/>
+            <Button FontFamily="FA" Background="Transparent" TextColor="White" Text="&#xf630;"  Command="{Binding ChangeLayoutCommand}" CommandParameter="Poster"/>
+            <Button FontFamily="FA" Background="Transparent" TextColor="White" Text="{x:Static Helpers:FontAwesomeIcons.Cards}"  Command="{Binding ChangeLayoutCommand}" CommandParameter="Card"/>
+        </HorizontalStackLayout>
+    </Grid>
+</ContentPage>

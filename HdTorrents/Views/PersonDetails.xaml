@@ -1,0 +1,33 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="HdTorrents.Views.PersonDetailsView"
+             xmlns:viewModel="clr-namespace:HdTorrents.ViewModel"
+             xmlns:HdTorrentsTypes="clr-namespace:HdTorrents.Types.Models;assembly=HdTorrents.Types"
+             x:DataType="viewModel:PersonDetailsViewModel">
+    <ContentPage.Content>
+        <Grid Padding="10" ColumnDefinitions="*,*" RowDefinitions="6*,4*">
+            <VerticalStackLayout Spacing="10" Grid.Column="1" Grid.Row="0">
+                <Label HorizontalTextAlignment="Center" TextColor="White" Text="{Binding Details.FullName}"/>
+                <Image Source="{Binding Details.ImageUrl}"></Image>
+                <Label Text="{Binding Details.Born, StringFormat='Born: {0}'}" />
+                <Label Text="{Binding Details.PlaceOfBirth, StringFormat='Place of birth: {0}'}" />
+            </VerticalStackLayout>
+            <ScrollView Grid.Column="0" Grid.Row="0">
+                <Label Text="{Binding Details.Memo}"/>
+            </ScrollView>
+            <CollectionView 
+                Margin="0,5"
+                Grid.Column="0" 
+                Grid.Row="1" 
+                Grid.ColumnSpan="2"
+                ItemsSource="{Binding Details.Movies}">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate x:DataType="HdTorrentsTypes:Reference">
+                        <Label TextColor="White" Text="{Binding Title}"/>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+        </Grid>
+    </ContentPage.Content>
+</ContentPage>

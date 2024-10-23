@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewModel="clr-namespace:HdTorrents.ViewModel"
+             xmlns:HdTorrentsTypes="clr-namespace:HdTorrents.Types.Models;assembly=HdTorrents.Types"             
+             xmlns:FAHelper="clr-namespace:HdTorrents.Types.Helpers;assembly=HdTorrents.Types"
+             x:Class="HdTorrents.Views.TorrentDetailsView"             
+             x:DataType="viewModel:TorrentDetailsViewModel"
+             Title="{Binding Details.Title}">
+    <ContentPage.Resources>
+        <DataTemplate x:Key="ImageUrlTemplate" x:DataType="HdTorrentsTypes:Chip">
+            <HorizontalStackLayout Margin="10">
+                <Frame BorderColor="White" Background="Transparent" CornerRadius="65" HeightRequest="70" WidthRequest="70" Padding="0">
+                    <Frame Background="Transparent" CornerRadius="60" HeightRequest="64" WidthRequest="64" Padding="0">
+                        <Image Aspect="AspectFit"  Source="{Binding ImageUrl}"/>
+                    </Frame>
+                </Frame>
+                <VerticalStackLayout VerticalOptions="Center" Margin="10,0">
+                    <Label TextColor="White" FontAttributes="Bold" VerticalTextAlignment="Center" Text="{Binding Name}"/>
+                    <Label  TextColor="White"  VerticalTextAlignment="Center" Text="{Binding Value}"/>
+                </VerticalStackLayout>
+            </HorizontalStackLayout>
+        </DataTemplate>
+        <DataTemplate x:Key="FATemplate" x:DataType="HdTorrentsTypes:Chip">
+            <HorizontalStackLayout Margin="10">
+                <Frame BorderColor="White" CornerRadius="70" HeightRequest="52" WidthRequest="52" Padding="0">
+                    <Frame BorderColor="White" CornerRadius="70" HeightRequest="48" WidthRequest="48" Padding="0">
+                        <Label Text="{Binding FA}" HorizontalTextAlignment="Center" VerticalTextAlignment="Center" FontSize="32" FontFamily="FA" />
+                    </Frame>
+                </Frame>
+                <VerticalStackLayout VerticalOptions="Center" Margin="10,0">
+                    <Label TextColor="White" FontAttributes="Bold" VerticalTextAlignment="Center" Text="{Binding Name}"/>
+                    <Label  TextColor="White"  VerticalTextAlignment="Center" Text="{Binding Value}"/>
+                </VerticalStackLayout>
+            </HorizontalStackLayout>
+        </DataTemplate>
+        <viewModel:DetailsDataTemplateSelector x:Key="ChipDataTemplateSelector"
+            ImageUrlTemplate="{StaticResource ImageUrlTemplate}"
+            FATemplate="{StaticResource FATemplate}" />
+    </ContentPage.Resources>
+    <ScrollView>
+        <Grid ColumnDefinitions="*,*" RowDefinitions="auto,auto,auto,auto,auto,auto" Opacity="1">
+            <Grid.Background>
+                <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                    <GradientStop Color="#333435" Offset="0.5"/>
+                    <GradientStop Color="#151515" Offset="1.0"/>
+                </LinearGradientBrush>
+            </Grid.Background>
+            <Image Aspect="AspectFill" Scale="1.1" Grid.ColumnSpan="2" Grid.RowSpan="5" Opacity=".4" HorizontalOptions="End" Source="{Binding Details.BackgroundUrl}"/>
+            <VerticalStackLayout HorizontalOptions="Start" Grid.Column="0" Grid.Row="0">
+                <Image VerticalOptions="Start" Source="{Binding Details.PosterUrl}" Margin="5"/>
+                <CollectionView Margin="5,0,5,5" ItemsLayout="HorizontalList"  ItemsSource="{Binding Details.TorrenDownloadUrls}">
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate x:DataType="HdTorrentsTypes:TorrentDownloadLink">
+                            <HorizontalStackLayout Spacing="10">
+                                <Border HorizontalOptions="Center" VerticalOptions="Center" StrokeThickness="3" HeightRequest="50" WidthRequest="50">
+                                    <Border.StrokeShape>
+                                        <RoundRectangle CornerRadius="60,60,60,60" />
+                                    </Border.StrokeShape>
+                                    <Button Command="{Binding Source={RelativeSource AncestorType={x:Type viewModel:TorrentDetailsViewModel}}, Path=DownloadTorrentCommand}" 
+                                            CommandParameter="{Binding Url}" 
+                                            CornerRadius="50" 
+                                            FontFamily="FA" 
+                                            IsVisible="true"
+                                            Text="{x:Static FAHelper:FontAwesomeIcons.Download}" 
+                                            TextColor="White" 
+                                            Padding="0"
+                                            FontSize="25"/>
+                                </Border>
+                            </HorizontalStackLayout>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+            </VerticalStackLayout>
+            <ScrollView VerticalOptions="Start" Grid.Row="0" Grid.Column="1">
+                <Label FontSize="Medium"  TextColor="White" Text="{Binding Details.Description }" />
+            </ScrollView>
+            <Frame IsVisible="{Binding HasCast}" BorderColor="White" BackgroundColor="Transparent" Grid.Column="0" Grid.Row="2" Grid.ColumnSpan="2" Padding="3">
+                <VerticalStackLayout>
+                    <Label FontAttributes="Bold" Margin="10,0" Text="Cast" TextColor="White"/>
+                    <CollectionView                         
+                        SelectionMode="Single"
+                        SelectionChangedCommand="{Binding GoToPersonDetailsCommand}" 
+                        SelectionChangedCommandParameter="{Binding Source={RelativeSource Self}, Path=SelectedItem}"
+                        ItemsLayout="HorizontalList" 
+                        ItemsSource="{Binding Details.Cast}" 
+                        ItemTemplate="{StaticResource ChipDataTemplateSelector}" />
+                </VerticalStackLayout>
+            </Frame>
+            <Frame IsVisible="{Binding HasCrew}" BorderColor="White" BackgroundColor="Transparent" Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" Padding="3"  >
+                <VerticalStackLayout>
+                    <Label FontAttributes="Bold" Margin="10,0" Text="Crew" TextColor="White"/>
+                    <CollectionView  
+                        SelectionMode="Single"
+                        SelectionChangedCommand="{Binding GoToPersonDetailsCommand}" 
+                        SelectionChangedCommandParameter="{Binding Source={RelativeSource Self}, Path=SelectedItem}"
+                        ItemsLayout="HorizontalList" 
+                        ItemsSource="{Binding Details.Crew}" 
+                        ItemTemplate="{StaticResource ChipDataTemplateSelector}"  />
+                </VerticalStackLayout>
+            </Frame>
+            <Frame IsVisible="{Binding HasExtras}" BorderColor="White" BackgroundColor="Transparent" Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2" Padding="3">
+                <VerticalStackLayout>
+                    <Label FontAttributes="Bold" Margin="10,0" Text="Extras" TextColor="White"/>
+                    <CollectionView ItemsLayout="HorizontalList" ItemsSource="{Binding Details.Extras}"  ItemTemplate="{StaticResource ChipDataTemplateSelector}">
+                    </CollectionView>
+                </VerticalStackLayout>
+            </Frame>
+            <Frame  IsVisible="{Binding HasRecommendations}" BorderColor="White" BackgroundColor="Transparent" Grid.ColumnSpan="2" Grid.Row="5" Grid.Column="0" Padding="3">
+                <VerticalStackLayout>
+                    <Label FontAttributes="Bold" Margin="10,0" Text="Recommendations" TextColor="White"/>
+                    <CollectionView ItemsLayout="HorizontalList"
+                            SelectionMode="Single"                            
+                            ItemsSource="{Binding Details.Recommendations}"
+                            SelectionChangedCommand="{Binding GoToDetailViewCommand}"
+                            SelectionChangedCommandParameter="{Binding Source={RelativeSource Self}, Path=SelectedItem}">
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate x:DataType="HdTorrentsTypes:Recommendation">
+                                <VerticalStackLayout Margin="10,0">
+                                    <Image WidthRequest="150" HeightRequest="255" Source="{Binding PosterUrl}"/>
+                                    <Label HorizontalTextAlignment="Center" TextColor="White" Text="{Binding Title}"/>
+                                    <Label HorizontalOptions="Center" TextColor="White" Text="{Binding ReleaseYear}"/>
+                                </VerticalStackLayout>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+                </VerticalStackLayout>
+            </Frame>
+        </Grid>
+    </ScrollView>
+</ContentPage>
