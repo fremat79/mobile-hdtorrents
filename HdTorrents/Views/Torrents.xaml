@@ -83,7 +83,7 @@
         </viewModel:TorrentsViewTemplateSelector>
     </ContentPage.Resources>
     <Grid RowDefinitions="10*,10*,72*,8*" Background="Black">
-        <Entry  TextChanged="Entry_TextChanged" Grid.Row="0"></Entry>
+        <Entry TextColor="Wheat"  TextChanged="Entry_TextChanged" Grid.Row="0"></Entry>
         <CollectionView 
             Grid.Row="1"    
             SelectionMode="Single"
