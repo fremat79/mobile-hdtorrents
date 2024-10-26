@@ -29,8 +29,15 @@ namespace HdTorrents.ViewModel
 
         async Task StoreCredentials(string userName, string passWord)
         {
-            await SecureStorage.SetAsync("username", userName);
-            await SecureStorage.SetAsync("password", passWord);
+            try
+            {
+                await SecureStorage.SetAsync("username", userName);
+                await SecureStorage.SetAsync("password", passWord);
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error while store credentials {ex}");
+            }
         }
     }
 
