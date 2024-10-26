@@ -33,7 +33,9 @@ public partial class LoginView : ContentPage
         }
         catch (Exception ex)
         {
-            // Handle exceptions
+            txtUserName.Text = string.Empty;
+            txtPwd.Text = string.Empty;
+            System.Diagnostics.Debug.WriteLine($"Error while loading credentials {ex}");
         }
     }
 
