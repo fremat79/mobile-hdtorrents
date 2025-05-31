@@ -31,8 +31,12 @@ namespace HdTorrents.ViewModel
         {
             try
             {
-                await SecureStorage.SetAsync("username", userName);
-                await SecureStorage.SetAsync("password", passWord);
+                // Remove specific keys if they exist                
+                SecureStorage.Default.Remove("username");
+                SecureStorage.Default.Remove("password");
+
+                await SecureStorage.Default.SetAsync("username", userName);
+                await SecureStorage.Default.SetAsync("password",passWord);
             }
             catch (Exception ex)
             {
