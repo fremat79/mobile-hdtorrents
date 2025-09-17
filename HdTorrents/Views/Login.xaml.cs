@@ -13,17 +13,16 @@ public partial class LoginView : ContentPage
         LoadCredentials();    
     }
 
-    void LoadCredentials()
+    async void LoadCredentials()
     {
         try
         {                                  
-            var usernameT = SecureStorage.GetAsync("username");
-            var passwordT = SecureStorage.GetAsync("password");
-            usernameT.Wait();
-            passwordT.Wait();
-            
-            var username = usernameT.Result;
-            var password = passwordT.Result;
+            var usernameT = await SecureStorage.GetAsync("username");
+            var passwordT = await SecureStorage.GetAsync("password");
+
+
+            var username = usernameT;
+            var password = passwordT;
 
             if (!string.IsNullOrEmpty(username) && !string.IsNullOrEmpty(password))
             {
