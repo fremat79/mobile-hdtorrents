@@ -6,16 +6,22 @@ using System.Text.Json;
 
 namespace HdTorrents.ViewModel
 {
+    public class LoginInfo
+    {
+        public string Password { get; set; }
+        public string UserName { get; set; }
+    }
+
     public partial class LoginViewModel : HdTorrentsBaseView
     {
         public LoginViewModel(HdTorrentsSite site)
-            :base(site)
-        {           
+            : base(site)
+        {
         }
 
         [RelayCommand]
-        async Task Login(string[] loginInfo)
-        {           
+        private async Task Login(string[] loginInfo)
+        {
             var loginObj = new LoginInfo() { UserName = loginInfo[0], Password = loginInfo[1] };
 
             string loginObjJson = JsonSerializer.Serialize(loginObj);
@@ -23,20 +29,20 @@ namespace HdTorrents.ViewModel
             await StoreCredentials(loginObj.UserName, loginObj.Password);
 
             await Site.Login(loginObj.UserName, loginObj.Password);
-         
+
             await Shell.Current.GoToAsync(nameof(TorrentsView));
         }
 
-        async Task StoreCredentials(string userName, string passWord)
+        private async Task StoreCredentials(string userName, string passWord)
         {
             try
             {
-                // Remove specific keys if they exist                
+                // Remove specific keys if they exist
                 SecureStorage.Default.Remove("username");
                 SecureStorage.Default.Remove("password");
 
                 await SecureStorage.Default.SetAsync("username", userName);
-                await SecureStorage.Default.SetAsync("password",passWord);
+                await SecureStorage.Default.SetAsync("password", passWord);
             }
             catch (Exception ex)
             {
@@ -56,11 +62,5 @@ namespace HdTorrents.ViewModel
         {
             throw new NotImplementedException();
         }
-    }
-
-    public class LoginInfo
-    {
-        public string UserName { get; set; }
-        public string Password { get; set; }
     }
 }

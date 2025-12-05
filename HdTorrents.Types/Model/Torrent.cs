@@ -1,8 +1,10 @@
 ﻿using AngleSharp.Dom;
-using HdTorrents.Types.CustomProcessor;
 using HdTorrents.Types.Attributes;
+using HdTorrents.Types.CustomProcessor;
 using HdTorrents.Types.Helpers;
 using System.Security.Cryptography.X509Certificates;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace HdTorrents.Types.Models
 {
@@ -232,5 +234,55 @@ namespace HdTorrents.Types.Models
         Details,
         Poster,
         Card
+    }
+
+    public class SearchResults
+    {
+        [JsonPropertyName("results")]
+        public List<SearchResultItem> Results { get; set; } = [];
+    }
+
+    public class SearchResultItem
+    {
+        [JsonPropertyName("id")]
+        public int Id { get; set; }
+
+        [JsonPropertyName("name")]
+        public string? Name { get; set; }
+
+        [JsonPropertyName("year")]
+        [JsonConverter(typeof(YearJsonConverter))]
+        public string? Year { get; set; }
+
+        [JsonPropertyName("image")]
+        public string? Image { get; set; }
+
+        [JsonPropertyName("url")]
+        public string? Url { get; set; }
+
+        [JsonPropertyName("type")]
+        public string? Type { get; set; }
+    }
+    
+    public class YearJsonConverter : JsonConverter<string?>
+    {
+        public override string? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+        {
+            return reader.TokenType switch
+            {
+                JsonTokenType.String => reader.GetString(),
+                JsonTokenType.Number => reader.GetInt32().ToString(),
+                JsonTokenType.Null => null,
+                _ => throw new JsonException()
+            };
+        }
+
+        public override void Write(Utf8JsonWriter writer, string? value, JsonSerializerOptions options)
+        {
+            if (value == null)
+                writer.WriteNullValue();
+            else
+                writer.WriteStringValue(value);
+        }
     }
 }
